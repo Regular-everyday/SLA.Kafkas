@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>SLA Quiz</title>
+<style>
+    body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        background-color: #f4f4f9;
+        color: #333;
+        line-height: 1.6;
+        margin: 0;
+        padding: 20px;
+    }
+    #quiz-container, #results-container {
+        max-width: 800px;
+        margin: 20px auto;
+        background: #fff;
+        padding: 20px;
+        border-radius: 8px;
+        box-shadow: 0 0 15px rgba(0,0,0,0.1);
+    }
+    h1, h2 {
+        text-align: center;
+        color: #4a4a4a;
+    }
+    .question {
+        margin-bottom: 25px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid #eee;
+    }
+    .question p {
+        font-weight: bold;
+        margin-bottom: 12px;
+    }
+    .options div {
+        margin-bottom: 8px;
+    }
+    label {
+        display: block;
+        padding: 8px 12px;
+        border: 1px solid #ddd;
+        border-radius: 5px;
+        cursor: pointer;
+        transition: background-color 0.2s, border-color 0.2s;
+    }
+    label:hover {
+        background-color: #f0f0f0;
+    }
+    input[type="radio"] {
+        margin-right: 10px;
+    }
+    .btn {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        font-size: 1.2em;
+        font-weight: bold;
+        color: #fff;
+        background-color: #007bff;
+        border: none;
+        border-radius: 5px;
+        cursor: pointer;
+        margin-top: 20px;
+        text-align: center;
+        text-decoration: none;
+        transition: background-color 0.3s;
+    }
+    .btn:hover {
+        background-color: #0056b3;
+    }
+    .btn-secondary {
+        background-color: #28a745;
+    }
+    .btn-secondary:hover {
+        background-color: #218838;
+    }
+    .result-item {
+        padding: 15px;
+        margin-bottom: 10px;
+        border-radius: 5px;
+    }
+    .result-item.correct {
+        background-color: #e9f7ef;
+        border-left: 5px solid #2ecc71;
+    }
+    .result-item.incorrect {
+        background-color: #fdeded;
+        border-left: 5px solid #e74c3c;
+    }
+    .result-item.blank {
+        background-color: #fdf3e6;
+        border-left: 5px solid #f39c12;
+    }
+    .reveal-btn {
+        display: inline-block;
+        padding: 5px 10px;
+        background-color: #f39c12;
+        color: white;
+        border: none;
+        border-radius: 3px;
+        cursor: pointer;
+        margin-top: 10px;
+    }
+    .hidden-answer {
+        font-weight: bold;
+        color: #2c3e50;
+    }
+</style>
+</head>
+<body>
+
+<div id="quiz-container">
+    <!-- Quiz questions will be injected here -->
+</div>
+
+<div id="results-container" style="display:none;">
+    <!-- Results will be injected here -->
+</div>
+
+<script>
+const quizDataPart1 = [
+{ question: "1. According to Markedness Theory, which structures are considered 'unmarked'?", options: { a: "Complex and rare structures", b: "Basic and natural structures", c: "Structures learned at the final stage", d: "Structures specific only to L2" }, answer: "b"}, { question: "2. According to the foundations of Markedness, where do learners' error profiles usually concentrate?", options: { a: "Unmarked structures", b: "Basic linguistic levels", c: "Marked structures", d: "Singular morphological forms" }, answer: "c"}, { question: "3. According to the Markedness Differential Hypothesis (Eckman, 1977), what happens when the L1 is unmarked but the L2 is marked?", options: { a: "Acquisition is easy", b: "No transfer occurs", c: "Acquisition difficulty is high", d: "The learner ignores the structure" }, answer: "c"}, { question: "4. Which of the following is an example of a 'marked' structure for Turkish learners of English?", options: { a: "Singular nouns", b: "The pronunciation of /θ/", c: "Simple sentences", d: "Basic word order" }, answer: "b"}, { question: "5. What is the suggested instructional sequence in lesson design based on Markedness Theory?", options: { a: "Marked → Unmarked", b: "Random order", c: "Unmarked → Marked", d: "Only marked structures" }, answer: "c"},
+{ question: "6. According to Flege's Speech Learning Model (SLM), which sounds are the most difficult to learn?", options: { a: "Dissimilar sounds", b: "New sounds", c: "Similar sounds", d: "Vowel sounds only" }, answer: "c"}, { question: "7. In SLM, what occurs during 'Equivalence Classification'?", options: { a: "A new phonetic category is formed", b: "An L2 sound is treated as equal to an L1 category", c: "The learner stops using L1 sounds", d: "The learner ignores pronunciation" }, answer: "b"}, { question: "8. In Optimality Theory (OT), which constraints prioritize simple, natural, and easy structures?", options: { a: "Faithfulness Constraints", b: "Lexical Constraints", c: "Markedness Constraints", d: "Syntactic Constraints" }, answer: "c"}, { question: "9. According to Nation (2001), what are the three main components of 'knowing a word'?", options: { a: "Grammar, Syntax, Spelling", b: "Form, Meaning, Use", c: "Translation, Sound, Definition", d: "Prefix, Suffix, Root" }, answer: "b"}, { question: "10. What is 'Incidental Vocabulary Learning'?", options: { a: "Learning words through intentional memorization", b: "Learning words through exposure without conscious intent", c: "Learning words only through translation", d: "Learning words by looking them up in a dictionary" }, answer: "b"},
+{ question: "11. What is the 'New View' (1990s-today) regarding the role of the Native Language (L1)?", options: { a: "L1 is the enemy of learning", b: "L1 should be eliminated completely", c: "L1 is your brain's best friend and impossible to switch off", d: "L1 has no effect on L2 processing" }, answer: "c"}, { question: "12. What does 'Avoidance' mean in the context of SLA?", options: { a: "Students don't know the structure at all", b: "Students know a structure but choose not to use it to play it safe", c: "Students forget the rules during an exam", d: "Teachers avoid teaching difficult topics" }, answer: "b"}, { question: "13. According to the Morpheme Order studies, which morpheme is typically acquired first?", options: { a: "3rd person -s", b: "Possessive 's", c: "-ing", d: "Articles" }, answer: "c"}, { question: "14. What is the core idea of the Teachability Hypothesis by Pienemann?", options: { a: "Any structure can be taught at any time", b: "Instruction is only effective when the learner is developmentally ready", c: "Teaching complex structures first is better", d: "L1 transfer determines all learning stages" }, answer: "b"}, { question: "15. In the processing hierarchy of Processability Theory, which stage follows 'Lemma access'?", options: { a: "Sentence procedure", b: "Category procedure", c: "Phrasal procedure", d: "Subordinate clause procedure" }, answer: "b"},
+{ question: "16. According to the table on 'Differential Learning Rates', which learners acquire English articles 'Very Slow'?", options: { a: "Arabic and Spanish speakers", b: "Turkish and Japanese speakers", c: "Arabic and Turkish speakers", d: "Spanish and Japanese speakers" }, answer: "b"}, { question: "17. According to the 'Different Paths' example, what is the first stage for Turkish speakers in English question formation?", options: { a: "You coffee like?", b: "Do you like coffee?", c: "You like coffee? (rising intonation)", d: "Like you coffee?" }, answer: "c"}, { question: "18. What does 'Overproduction' (or Overgeneralization) indicate in a learner?", options: { a: "Laziness and lack of study", b: "Evidence of rule discovery and creativity", c: "Negative transfer from L1 only", d: "Permanent fossilization" }, answer: "b"}, { question: "19. Which of the following is an example of an adult Turkish speaker's overgeneralization in English?", options: { a: "I go cinema", b: "I have car", c: "seed (instead of saw)", d: "der Haus" }, answer: "c"}, { question: "20. In the context of Turkish learners of English, where is transfer described as 'Strong'?", options: { a: "Articles", b: "Plural marking", c: "Word order", d: "Prepositions" }, answer: "c"},
+];
+
+
+
+let startTime;
+
+function loadQuiz(quizData, partNumber) {
+    const quizContainer = document.getElementById('quiz-container');
+    quizContainer.innerHTML = ''; // Clear previous quiz content
+    
+    const title = document.createElement('h1');
+    const quizTitle = partNumber === 1 ? 'SLA Quiz - Part 1' : 'SLA Quiz - Part 2';
+    title.textContent = quizTitle;
+    quizContainer.appendChild(title);
+
+    quizData.forEach((item, index) => {
+        // Use a unique name for radio buttons in each part
+        const radioName = `p${partNumber}q${index + 1}`;
+        const questionElement = document.createElement('div');
+        questionElement.classList.add('question');
+        
+        let optionsHTML = '';
+        for (const key in item.options) {
+            optionsHTML += `
+                <div>
+                    <label>
+                        <input type="radio" name="${radioName}" value="${key}">
+                        ${key.toUpperCase()}. ${item.options[key]}
+                    </label>
+                </div>
+            `;
+        }
+        
+        questionElement.innerHTML = `<p>${item.question}</p><div class="options">${optionsHTML}</div>`;
+        quizContainer.appendChild(questionElement);
+    });
+
+    const finishButton = document.createElement('button');
+    finishButton.id = `finish-btn-part${partNumber}`;
+    finishButton.className = 'btn';
+    finishButton.textContent = 'Finish';
+    finishButton.onclick = () => calculateResults(quizData, partNumber);
+    quizContainer.appendChild(finishButton);
+
+    document.getElementById('results-container').style.display = 'none';
+    quizContainer.style.display = 'block';
+    startTime = new Date();
+    window.scrollTo(0, 0);
+}
+
+function calculateResults(quizData, partNumber) {
+    const endTime = new Date();
+    const timeDiff = endTime - startTime;
+    const seconds = Math.round(timeDiff / 1000);
+    const minutes = Math.floor(seconds / 60);
+    const remainingSeconds = seconds % 60;
+    const timeSpent = `${minutes} minute(s) and ${remainingSeconds} second(s)`;
+
+    const resultsContainer = document.getElementById('results-container');
+    let resultsHTML = `<h2>Quiz Results - Part ${partNumber}</h2>`;
+    resultsHTML += `<p><strong>Time Taken:</strong> ${timeSpent}</p>`;
+    
+    let correctCount = 0;
+    quizData.forEach((item, index) => {
+        const questionIndex = index + 1;
+        const radioName = `p${partNumber}q${questionIndex}`;
+        const selectedOption = document.querySelector(`input[name="${radioName}"]:checked`);
+        
+        if (selectedOption) {
+            const userAnswer = selectedOption.value;
+            if (userAnswer === item.answer) {
+                correctCount++;
+                resultsHTML += `<div class="result-item correct"><strong>Question ${questionIndex}:</strong> Correct</div>`;
+            } else {
+                resultsHTML += `
+                    <div class="result-item incorrect">
+                        <p><strong>Question ${questionIndex}:</strong> Incorrect</p>
+                        <p><em>${item.question}</em></p>
+                        <p><strong>Your Answer:</strong> (${userAnswer.toUpperCase()}) ${item.options[userAnswer]}</p>
+                        <p><strong>Correct Answer:</strong> (${item.answer.toUpperCase()}) ${item.options[item.answer]}</p>
+                    </div>
+                `;
+            }
+        } else {
+            resultsHTML += `
+                <div class="result-item blank">
+                    <p><strong>Question ${questionIndex}:</strong> Not Answered</p>
+                    <p><em>${item.question}</em></p>
+                    <button class="reveal-btn" data-question-index="${index}" data-part="${partNumber}">Reveal Correct Answer</button>
+                </div>
+            `;
+        }
+    });
+
+    const score = (correctCount / quizData.length) * 100;
+    let finalHTML = `<h2>Final Score: ${correctCount} / ${quizData.length} (${score.toFixed(1)}%)</h2><hr>` + resultsHTML;
+    
+    if (partNumber === 1) {
+        finalHTML += `<button id="continue-btn" class="btn btn-secondary">Continue to Part 2</button>`;
+    }
+
+    resultsContainer.innerHTML = finalHTML;
+
+    document.getElementById('quiz-container').style.display = 'none';
+    resultsContainer.style.display = 'block';
+    window.scrollTo(0, 0);
+
+    if (partNumber === 1) {
+        document.getElementById('continue-btn').addEventListener('click', () => loadQuiz(quizDataPart2, 2));
+    }
+
+    document.querySelectorAll('.reveal-btn').forEach(button => {
+        button.addEventListener('click', (e) => {
+            if(e.target.parentNode.querySelector('.hidden-answer')) return; // Prevent adding multiple times
+            const qIndex = parseInt(e.target.getAttribute('data-question-index'));
+            const part = parseInt(e.target.getAttribute('data-part'));
+            const data = (part === 1) ? quizDataPart1 : quizDataPart2;
+            const questionData = data[qIndex];
+            const answerText = `(${questionData.answer.toUpperCase()}) ${questionData.options[questionData.answer]}`;
+            
+            const answerP = document.createElement('p');
+            answerP.classList.add('hidden-answer');
+            answerP.textContent = `Correct Answer: ${answerText}`;
+            
+            e.target.parentNode.appendChild(answerP);
+            e.target.style.display = 'none';
+        });
+    });
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    loadQuiz(quizDataPart1, 1);
+});
+
+</script>
+
+</body>
+</html>
